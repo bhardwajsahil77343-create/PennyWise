@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Features | Pennywise</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches && 'IntersectionObserver' in window) {
+            document.documentElement.classList.add('scroll-reveal-enabled');
+        }
+    </script>
+    <link rel="stylesheet" href="scroll-reveal.css">
+    <script src="scroll-reveal.js" defer></script>
+    <style>
+        @view-transition { navigation: auto; }
+        ::view-transition-old(root) { animation: page-fade-out 0.22s ease-in both; }
+        ::view-transition-new(root) { animation: page-fade-in 0.42s ease-out both; }
+        html { scroll-behavior: smooth; }
+        body { background: #F8FAFC; color: #34465A; font-family: Inter, sans-serif; animation: page-enter 0.45s ease-out both; }
+        .soft-card { background: #fff; border: 1px solid #DCE7F0; border-radius: 1.25rem; box-shadow: 0 10px 30px -5px rgba(66,153,209,.08); transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease; }
+        .soft-card:hover { transform: translateY(-4px); border-color: #B9DDF2; box-shadow: 0 18px 36px -10px rgba(66,153,209,.18); }
+        .btn-primary { background: #4299D1; color: white; font-weight: 600; transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease; }
+        .btn-primary:hover { background: #3182ce; transform: translateY(-2px); box-shadow: 0 8px 18px rgba(66,153,209,.25); }
+        a, button, input, textarea { transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease; }
+        main h1, main h2, main h3, main p, main label, main article span, header nav a, footer span, footer a { animation: text-enter 0.6s ease-out both; }
+        header nav a:nth-child(1) { animation-delay: 0.06s; }
+        header nav a:nth-child(2) { animation-delay: 0.12s; }
+        header nav a:nth-child(3) { animation-delay: 0.18s; }
+        header nav a:nth-child(4) { animation-delay: 0.24s; }
+        main h1 { animation-delay: 0.1s; }
+        main p { animation-delay: 0.18s; }
+        main article:nth-child(2) h2, main article:nth-child(2) p { animation-delay: 0.08s; }
+        main article:nth-child(3) h2, main article:nth-child(3) p { animation-delay: 0.16s; }
+        main article:nth-child(4) h2, main article:nth-child(4) p { animation-delay: 0.24s; }
+        main article:nth-child(5) h2, main article:nth-child(5) p { animation-delay: 0.32s; }
+        @keyframes page-enter { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes text-enter { 0% { opacity: 0; transform: translateY(12px); filter: blur(4px); } 70% { opacity: 0.82; } 100% { opacity: 1; transform: translateY(0); filter: blur(0); } }
+        @keyframes page-fade-in { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes page-fade-out { from { opacity: 1; } to { opacity: 0; } }
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: 0.01ms !important; }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+    <header class="w-full max-w-7xl mx-auto px-6 py-5 flex items-center justify-between">
+        <a href="financial_command_center.html" class="text-xl font-bold tracking-tight">Pennywise</a>
+        <nav class="flex flex-wrap items-center gap-3 sm:gap-7 text-sm font-medium text-slate-600">
+            <a href="financial_command_center.html" class="hover:text-blue-600">Home</a>
+            <a href="features.html" class="text-blue-600 font-semibold">Features</a>
+            <a href="command_center.html" class="hover:text-blue-600">Command Center</a>
+            <a href="contact.html" class="hover:text-blue-600">Contact</a>
+        </nav>
+    </header>
+
+    <main class="w-full max-w-7xl mx-auto px-6 py-12 sm:py-20 flex-1">
+        <div class="max-w-3xl mx-auto text-center mb-12">
+            <span class="text-xs font-bold uppercase tracking-wider text-blue-600 bg-blue-50 px-3 py-1 rounded-full">Pennywise features</span>
+            <h1 class="text-4xl sm:text-5xl font-extrabold tracking-tight mt-5">Know where your money goes.</h1>
+            <p class="text-slate-600 mt-4 leading-relaxed">A single place to organize payments across UPI, cards, bills, EMIs, and subscriptions. Add and manage payments from your Command Center.</p>
+        </div>
+
+        <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5" aria-label="Product features">
+            <article class="soft-card p-6 space-y-4">
+                <div class="w-12 h-12 rounded-2xl bg-blue-50 flex items-center justify-center text-2xl" aria-hidden="true">💳</div>
+                <h2 class="text-lg font-bold">Unified payment feed</h2>
+                <p class="text-sm text-slate-600 leading-relaxed">Add UPI, card, and auto-debit transactions manually, then filter the activity by payment type.</p>
+            </article>
+            <article class="soft-card p-6 space-y-4">
+                <div class="w-12 h-12 rounded-2xl bg-blue-50 flex items-center justify-center text-2xl" aria-hidden="true">📊</div>
+                <h2 class="text-lg font-bold">Safe to Spend Today</h2>
+                <p class="text-sm text-slate-600 leading-relaxed">Set your current balance and see a daily spending amount after reserving upcoming bills, EMIs, subscriptions, and tracked trial conversions.</p>
+            </article>
+            <article class="soft-card p-6 space-y-4">
+                <div class="w-12 h-12 rounded-2xl bg-blue-50 flex items-center justify-center text-2xl" aria-hidden="true">🔔</div>
+                <h2 class="text-lg font-bold">Bounce Shield</h2>
+                <p class="text-sm text-slate-600 leading-relaxed">Compare your available balance with upcoming EMIs and bills, and get an early shortfall warning with the amount to add.</p>
+            </article>
+            <article class="soft-card p-6 space-y-4">
+                <div class="w-12 h-12 rounded-2xl bg-blue-50 flex items-center justify-center text-2xl" aria-hidden="true">🔎</div>
+                <h2 class="text-lg font-bold">Free Trial Trap Detector</h2>
+                <p class="text-sm text-slate-600 leading-relaxed">Track trial amounts and end dates; get a warning two days before a recurring charge may begin.</p>
+            </article>
+        </section>
+
+    </main>
+
+    <footer class="w-full max-w-7xl mx-auto px-6 py-6 border-t border-slate-200 text-xs text-slate-500 flex justify-between gap-4">
+        <span>© 2026 Pennywise</span>
+        <a href="contact.html" class="hover:text-blue-600">Contact & feedback</a>
+    </footer>
+</body>
+</html>

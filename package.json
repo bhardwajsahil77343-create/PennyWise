@@ -1,0 +1,9 @@
+{
+  "name": "pennywise-local",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Local Pennywise payment tracker and JSON API",
+  "scripts": {
+    "start": "node backend/server.js"
+  }
+}

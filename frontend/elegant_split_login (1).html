@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Financial Command Center - Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Load Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+    <script>
+        if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches && 'IntersectionObserver' in window) {
+            document.documentElement.classList.add('scroll-reveal-enabled');
+        }
+    </script>
+    <link rel="stylesheet" href="scroll-reveal.css">
+    <script src="scroll-reveal.js" defer></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                    },
+                    colors: {
+                        darkBg: '#0a0a0a',
+                        lightBg: '#ffffff',
+                        accentGold: '#d8cbb8',
+                        textDark: '#1a1a1a',
+                        textMuted: '#888888'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @view-transition {
+            navigation: auto;
+        }
+        ::view-transition-old(root) {
+            animation: page-fade-out 0.22s ease-in both;
+        }
+        ::view-transition-new(root) {
+            animation: page-fade-in 0.42s ease-out both;
+        }
+        body {
+            margin: 0;
+            overflow: hidden; /* Prevent scrolling to keep the split-screen pure */
+            background-color: #0a0a0a;
+            animation: page-enter 0.5s ease-out both;
+        }
+        .relative.hidden.lg\:flex {
+            animation: panel-enter-left 0.7s ease-out both;
+        }
+        .w-full.lg\:w-1\/2.h-full {
+            animation: panel-enter-right 0.7s ease-out both;
+        }
+        a, button {
+            transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+        }
+        .relative h1, .relative h2, .relative p, .relative label {
+            animation: text-enter 0.6s ease-out both;
+        }
+        .relative h1 { animation-delay: 0.12s; }
+        .relative h2 { animation-delay: 0.18s; }
+        .relative p { animation-delay: 0.24s; }
+        @keyframes page-enter {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes text-enter {
+            0% { opacity: 0; transform: translateY(12px); filter: blur(4px); }
+            70% { opacity: 0.82; }
+            100% { opacity: 1; transform: translateY(0); filter: blur(0); }
+        }
+        @keyframes page-fade-in {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes page-fade-out {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+        @keyframes panel-enter-left {
+            from { opacity: 0; transform: translateX(-12px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes panel-enter-right {
+            from { opacity: 0; transform: translateX(12px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+        
+        /* Premium Modern Enclosed Input Styling */
+        .input-group {
+            position: relative;
+            margin-bottom: 1.25rem;
+        }
+        .input-field {
+            width: 100%;
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 1.5rem 1rem 0.5rem 1rem; /* Extra top padding for the floating label */
+            font-size: 0.95rem;
+            color: #1a1a1a;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .input-field:focus {
+            outline: none;
+            background: #ffffff;
+            border-color: #0a0a0a;
+            box-shadow: 0 4px 20px -4px rgba(0, 0, 0, 0.05), 0 0 0 1px #0a0a0a;
+        }
+        .input-field::placeholder {
+            color: transparent; /* Hidden by default, handled by label */
+        }
+        
+        /* Floating Label Logic */
+        .input-label {
+            position: absolute;
+            top: 50%;
+            left: 1rem;
+            transform: translateY(-50%);
+            font-size: 0.95rem;
+            color: #888888;
+            pointer-events: none;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .input-field:focus ~ .input-label,
+        .input-field:not(:placeholder-shown) ~ .input-label {
+            top: 1.1rem;
+            font-size: 0.65rem;
+            color: #0a0a0a;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        /* Custom Premium Button */
+        .btn-primary {
+            background: linear-gradient(135deg, #0a0a0a 0%, #2a2a2a 100%);
+            color: #ffffff;
+            border: 1px solid #000;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px -8px rgba(0, 0, 0, 0.4);
+        }
+
+        /* Toggle Password Positioning */
+        .toggle-password {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #b0b0b0;
+            transition: color 0.2s ease;
+        }
+        .toggle-password:hover {
+            color: #0a0a0a;
+        }
+    </style>
+</head>
+<body class="h-screen w-full flex text-textDark selection:bg-accentGold selection:text-darkBg">
+
+    <!-- LEFT PANEL: Dark Theme with Advanced 3D Wave -->
+    <div class="relative hidden lg:flex lg:w-1/2 h-full bg-darkBg flex-col justify-center items-center p-16 overflow-hidden">
+        
+        <!-- Three.js Canvas Container -->
+        <div id="canvas-container" class="absolute inset-0 z-0"></div>
+
+        <!-- HUD Elements (Tech/Data Vibe from Reference) -->
+        <div class="absolute inset-0 z-10 pointer-events-none">
+            <div class="absolute top-16 left-16 text-[9px] text-accentGold tracking-[0.3em] font-mono opacity-60 flex items-center gap-2">
+                <div class="w-1 h-1 bg-accentGold"></div> 13-30HZ // SYNC
+            </div>
+            <div class="absolute bottom-32 left-20 text-[9px] text-white tracking-[0.3em] font-mono opacity-50 flex items-center gap-2">
+                <div class="w-1 h-1 bg-white"></div> ENCRYPTED PORTAL
+            </div>
+            <div class="absolute top-1/3 right-20 text-[9px] text-white tracking-[0.3em] font-mono opacity-50 flex items-center gap-2">
+                <div class="w-1 h-1 bg-white"></div> DATA REGULATION
+            </div>
+            <div class="absolute bottom-16 right-16 text-[9px] text-accentGold tracking-[0.3em] font-mono opacity-60 flex items-center gap-2">
+                <div class="w-1 h-1 bg-accentGold"></div> ALPHA - 8.0 HZ
+            </div>
+        </div>
+
+        <!-- Clean, bold typography centered inside the particle ring -->
+        <div class="relative z-20 w-full text-center pointer-events-none mt-[-5%] mix-blend-screen">
+            <h1 class="font-serif text-5xl xl:text-7xl leading-[1.1] text-white tracking-widest uppercase">
+                CLARITY IN <br>
+                <span class="text-accentGold opacity-90">EVERY TRANSACTION</span>
+            </h1>
+            <p class="mt-8 text-[10px] text-gray-400 font-mono tracking-widest max-w-md mx-auto opacity-70 leading-relaxed uppercase">
+                Pennywise creates live data experiences designed to move your finances from stress and overwhelm into calm and focus, with signals to regulate your mind.
+            </p>
+        </div>
+
+    </div>
+
+    <!-- RIGHT PANEL: Premium Elevated Light Theme Login -->
+    <div class="w-full lg:w-1/2 h-full flex flex-col justify-center items-center p-6 lg:p-8 relative z-20 shadow-2xl overflow-y-auto"
+         style="background-image: url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop'); background-size: cover; background-position: center;">
+        
+        <!-- Soft frosted overlay to blend the image and keep text readable -->
+        <div class="absolute inset-0 bg-white/50 backdrop-blur-md"></div>
+
+        <!-- Elevated Form Container (Upgraded to Frosted Glass) -->
+        <div class="w-full max-w-md bg-white/70 backdrop-blur-2xl p-6 sm:p-10 rounded-[2rem] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.2)] border border-white/60 relative overflow-hidden z-10 my-auto">
+            
+            <!-- Subtle decorative background element inside card -->
+            <div class="absolute top-0 right-0 -mt-12 -mr-12 w-40 h-40 bg-accentGold opacity-[0.15] rounded-full blur-3xl pointer-events-none"></div>
+
+            <!-- Mobile Only Header -->
+            <div class="lg:hidden mb-6 text-center relative z-10">
+                <h2 class="font-serif text-3xl text-darkBg tracking-wide">Pennywise<span class="text-accentGold">.</span></h2>
+            </div>
+
+            <div class="mb-6 relative z-10">
+                <div class="flex items-center gap-2 mb-3">
+                    <span class="relative flex h-2.5 w-2.5">
+                      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-accentGold opacity-75"></span>
+                      <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-accentGold"></span>
+                    </span>
+                    <span class="text-[10px] font-mono tracking-widest text-gray-500 uppercase font-semibold">Command Center</span>
+                </div>
+                <h2 class="font-serif text-3xl sm:text-4xl text-gray-900 font-bold mb-2 tracking-tight">Welcome back</h2>
+                <p class="text-gray-600 text-sm leading-relaxed">Manage your payments, subscriptions, and EMIs in one clear picture.</p>
+            </div>
+
+            <form id="login-form" class="space-y-4 relative z-10">
+                
+                <!-- Floating Label Input: Email -->
+                <div class="input-group">
+                    <input type="email" id="email" class="input-field" placeholder="Email" required>
+                    <label for="email" class="input-label">Email Address</label>
+                </div>
+
+                <!-- Floating Label Input: Password -->
+                <div class="input-group">
+                    <input type="password" id="password" class="input-field pr-12" placeholder="Password" required>
+                    <label for="password" class="input-label">Password</label>
+                    <svg class="toggle-password w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" onclick="togglePassword()">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                </div>
+
+                <!-- Form Options -->
+                <div class="flex items-center justify-between pb-4 pt-1">
+                    <label class="flex items-center space-x-2 cursor-pointer group">
+                        <input type="checkbox" class="form-checkbox h-4 w-4 text-darkBg border-gray-300 rounded focus:ring-darkBg transition-all">
+                        <span class="text-sm text-textMuted group-hover:text-darkBg transition-colors">Remember me</span>
+                    </label>
+                    <a href="#" class="text-sm font-medium text-gray-500 hover:text-darkBg transition-colors">Recover password</a>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="w-full btn-primary py-3.5 rounded-xl text-sm font-semibold tracking-wide flex justify-center items-center gap-2 group">
+                    <span>Authenticate</span>
+                    <svg class="w-4 h-4 transform group-hover:translate-x-1.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                    </svg>
+                </button>
+            </form>
+            <p class="mt-3 text-center text-xs text-gray-500 relative z-10">Demo mode: use any valid email and password to continue. Account verification is not configured.</p>
+
+            <!-- Separator -->
+            <div class="mt-6 mb-6 relative z-10">
+                <div class="absolute inset-0 flex items-center">
+                    <div class="w-full border-t border-gray-200"></div>
+                </div>
+                <div class="relative flex justify-center text-[10px] uppercase tracking-widest font-semibold">
+                    <span class="px-4 text-gray-400" style="background: transparent;">Or</span>
+                </div>
+            </div>
+
+            <!-- Standard Official Google Login Button -->
+            <button class="w-full bg-white border border-gray-300 hover:bg-gray-50 hover:border-gray-400 text-gray-700 text-sm font-medium py-3 rounded-xl flex items-center justify-center space-x-3 transition-all duration-200 shadow-sm hover:shadow relative z-10">
+                <svg class="w-5 h-5" viewBox="0 0 24 24">
+                    <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                    <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                    <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+                    <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                </svg>
+                <span class="font-sans">Continue with Google</span>
+            </button>
+            
+            <p class="mt-8 text-center text-xs text-gray-500 relative z-10">
+                New to Pennywise? <a href="#" class="font-medium text-darkBg hover:underline">Create an account</a>
+            </p>
+        </div>
+    </div>
+
+    <!-- Advanced Three.js Animation -->
+    <script>
+        // Password Toggle Functionality
+        function togglePassword() {
+            const pwdInput = document.getElementById('password');
+            if (pwdInput.type === 'password') {
+                pwdInput.type = 'text';
+            } else {
+                pwdInput.type = 'password';
+            }
+        }
+
+        document.getElementById('login-form').addEventListener('submit', (event) => {
+            event.preventDefault();
+            window.location.href = 'command_center.html';
+        });
+
+        const container = document.getElementById('canvas-container');
+        
+        // 1. Scene Setup
+        const scene = new THREE.Scene();
+        // Deep fade effect into the background
+        scene.fog = new THREE.FogExp2(0x0a0a0a, 0.04);
+
+        const camera = new THREE.PerspectiveCamera(60, (window.innerWidth / 2) / window.innerHeight, 0.1, 1000);
+        camera.position.set(0, 5, 12);
+        camera.lookAt(0, 0, 0);
+
+        const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+        renderer.setPixelRatio(window.devicePixelRatio);
+        
+        function updateSize() {
+            const width = window.innerWidth >= 1024 ? window.innerWidth / 2 : window.innerWidth;
+            const height = window.innerHeight;
+            renderer.setSize(width, height);
+            camera.aspect = width / height;
+            camera.updateProjectionMatrix();
+        }
+        
+        container.appendChild(renderer.domElement);
+        updateSize();
+        window.addEventListener('resize', updateSize);
+
+        // Global group for parallax
+        const group = new THREE.Group();
+        scene.add(group);
+
+        // 2. The Dense Particle Sphere (Constellation)
+        const particleCount = 25000;
+        const particleGeometry = new THREE.BufferGeometry();
+        const positions = new Float32Array(particleCount * 3);
+        const colors = new Float32Array(particleCount * 3);
+        
+        // Base radius for the sphere
+        const radius = 5.5; 
+
+        for(let i = 0; i < particleCount; i++) {
+            // Spherical distribution algorithm
+            const u = Math.random();
+            const v = Math.random();
+            const theta = 2 * Math.PI * u;
+            const phi = Math.acos(2 * v - 1);
+            
+            // Add volume/thickness to the shell to create the dense ring effect
+            const r = radius + (Math.random() - 0.5) * 3.5; 
+
+            const x = r * Math.sin(phi) * Math.cos(theta);
+            const y = r * Math.sin(phi) * Math.sin(theta);
+            const z = r * Math.cos(phi);
+
+            positions[i*3] = x;
+            positions[i*3+1] = y;
+            positions[i*3+2] = z;
+            
+            // Color variation: mostly white/gray with subtle mint/gold hints
+            const mix = Math.random();
+            if(mix > 0.8) {
+                // Accent Gold hint
+                colors[i*3] = 0.85; // R
+                colors[i*3+1] = 0.80; // G
+                colors[i*3+2] = 0.72; // B
+            } else if (mix > 0.6) {
+                // Mint/Cyan hint (like reference image)
+                colors[i*3] = 0.6; // R
+                colors[i*3+1] = 0.9; // G
+                colors[i*3+2] = 0.8; // B
+            } else {
+                // Pure white/gray
+                const intensity = 0.3 + Math.random() * 0.7;
+                colors[i*3] = intensity;
+                colors[i*3+1] = intensity;
+                colors[i*3+2] = intensity;
+            }
+        }
+        
+        particleGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+        particleGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+        // Create a circular gradient texture mathematically for softer particles
+        const canvas = document.createElement('canvas');
+        canvas.width = 16; canvas.height = 16;
+        const context = canvas.getContext('2d');
+        const gradient = context.createRadialGradient(8, 8, 0, 8, 8, 8);
+        gradient.addColorStop(0, 'rgba(255,255,255,1)');
+        gradient.addColorStop(1, 'rgba(255,255,255,0)');
+        context.fillStyle = gradient;
+        context.fillRect(0,0,16,16);
+        const particleTexture = new THREE.CanvasTexture(canvas);
+
+        const particleMaterial = new THREE.PointsMaterial({
+            size: 0.08,
+            vertexColors: true,
+            transparent: true,
+            opacity: 0.8,
+            map: particleTexture,
+            blending: THREE.AdditiveBlending,
+            depthWrite: false
+        });
+
+        const particleSphere = new THREE.Points(particleGeometry, particleMaterial);
+        
+        // Tilt it slightly to match the dynamic angle in the reference
+        particleSphere.rotation.x = Math.PI / 8;
+        group.add(particleSphere);
+
+        // 3. Interaction (Mouse Parallax)
+        let mouseX = 0;
+        let mouseY = 0;
+        let targetX = 0;
+        let targetY = 0;
+
+        document.addEventListener('mousemove', (event) => {
+            // Normalized coordinates for the left half of the screen
+            const leftHalfWidth = window.innerWidth / 2;
+            if(event.clientX <= leftHalfWidth) {
+                mouseX = (event.clientX / leftHalfWidth) * 2 - 1;
+                mouseY = -(event.clientY / window.innerHeight) * 2 + 1;
+            }
+        });
+
+        // 4. Animation Loop
+        const clock = new THREE.Clock();
+
+        function animate() {
+            requestAnimationFrame(animate);
+            const elapsedTime = clock.getElapsedTime();
+
+            // Slowly rotate the massive particle constellation
+            particleSphere.rotation.y = elapsedTime * 0.05;
+            particleSphere.rotation.z = elapsedTime * 0.015;
+
+            // Apply silky smooth Parallax effect based on mouse
+            targetX = mouseX * 0.5;
+            targetY = mouseY * 0.5;
+            
+            group.rotation.y += (targetX - group.rotation.y) * 0.05;
+            group.rotation.x += (targetY - group.rotation.x) * 0.05;
+
+            renderer.render(scene, camera);
+        }
+
+        animate();
+    </script>
+</body>
+</html>

@@ -1,0 +1,63 @@
+{
+  "balance": 10000,
+  "transactions": [
+    {
+      "id": "seed-netflix",
+      "merchant": "Netflix Subscription",
+      "amount": 649,
+      "category": "Subscriptions",
+      "method": "Auto-debit",
+      "date": "2026-10-22"
+    },
+    {
+      "id": "seed-zomato",
+      "merchant": "Zomato Food Delivery",
+      "amount": 420,
+      "category": "Food & Dining",
+      "method": "UPI",
+      "date": "2026-10-23"
+    },
+    {
+      "id": "seed-electricity",
+      "merchant": "Electricity Bill",
+      "amount": 1850,
+      "category": "Bills & EMI",
+      "method": "Card",
+      "date": "2026-10-23"
+    }
+  ],
+  "bills": [
+    {
+      "id": "car-emi",
+      "name": "HDFC Car EMI",
+      "amount": 6999,
+      "dueDate": "2026-10-26",
+      "paid": true
+    },
+    {
+      "id": "youtube",
+      "name": "YouTube Premium",
+      "amount": 139,
+      "dueDate": "2026-11-04",
+      "dueIn": 12,
+      "paid": true
+    },
+    {
+      "id": "prime",
+      "name": "Amazon Prime",
+      "amount": 1499,
+      "dueDate": "2026-11-20",
+      "dueIn": 28,
+      "paid": false
+    }
+  ],
+  "trials": [
+    {
+      "id": "trial-spotify",
+      "name": "Spotify",
+      "amount": 119,
+      "expiresOn": "2026-10-25"
+    }
+  ],
+  "dismissedSubscriptions": []
+}

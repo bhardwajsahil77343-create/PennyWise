@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Command Center | Pennywise</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches && 'IntersectionObserver' in window) {
+            document.documentElement.classList.add('scroll-reveal-enabled');
+        }
+    </script>
+    <link rel="stylesheet" href="scroll-reveal.css">
+    <script src="scroll-reveal.js" defer></script>
+    <style>
+        @view-transition { navigation: auto; }
+        ::view-transition-old(root) { animation: page-fade-out 0.22s ease-in both; }
+        ::view-transition-new(root) { animation: page-fade-in 0.42s ease-out both; }
+        html { scroll-behavior: smooth; }
+        body { background: #F8FAFC; color: #34465A; font-family: Inter, sans-serif; animation: page-enter 0.45s ease-out both; }
+        .soft-card { background: #fff; border: 1px solid #DCE7F0; border-radius: 1.25rem; box-shadow: 0 10px 30px -5px rgba(66,153,209,.08); transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease; }
+        .soft-card:hover { transform: translateY(-3px); border-color: #B9DDF2; box-shadow: 0 18px 36px -10px rgba(66,153,209,.16); }
+        .btn-primary { background: #4299D1; color: white; font-weight: 600; transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease; }
+        .btn-primary:hover { background: #3182ce; transform: translateY(-2px); box-shadow: 0 8px 18px rgba(66,153,209,.25); }
+        a, button, select, input { transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease; }
+        .insight-card { min-height: 210px; }
+        .insight-value { font-size: clamp(1.75rem, 4vw, 2.5rem); letter-spacing: -0.04em; }
+        main h1, main h2, main h3, main p, main label, main span,
+        header nav a, footer span, footer a {
+            animation: text-enter 0.6s ease-out both;
+        }
+        header nav a:nth-child(1) { animation-delay: 0.06s; }
+        header nav a:nth-child(2) { animation-delay: 0.12s; }
+        header nav a:nth-child(3) { animation-delay: 0.18s; }
+        header nav a:nth-child(4) { animation-delay: 0.24s; }
+        main h1 { animation-delay: 0.08s; }
+        main h2 { animation-delay: 0.14s; }
+        main p { animation-delay: 0.2s; }
+        @keyframes page-enter { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes text-enter { 0% { opacity: 0; transform: translateY(12px); filter: blur(4px); } 70% { opacity: 0.82; } 100% { opacity: 1; transform: translateY(0); filter: blur(0); } }
+        @keyframes page-fade-in { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes page-fade-out { from { opacity: 1; } to { opacity: 0; } }
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: 0.01ms !important; }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+    <header class="w-full max-w-7xl mx-auto px-6 py-5 flex items-center justify-between">
+        <a href="financial_command_center.html" class="text-xl font-bold tracking-tight">Pennywise</a>
+        <nav class="flex flex-wrap items-center gap-3 sm:gap-7 text-sm font-medium text-slate-600">
+            <a href="financial_command_center.html" class="hover:text-blue-600">Home</a>
+            <a href="features.html" class="hover:text-blue-600">Features</a>
+            <a href="command_center.html" class="text-blue-600 font-semibold">Command Center</a>
+            <a href="contact.html" class="hover:text-blue-600">Contact</a>
+        </nav>
+        <span class="hidden sm:block text-xs rounded-full bg-blue-50 px-3 py-1.5 text-blue-700">Personal tracker</span>
+    </header>
+
+    <div id="backend-error" class="hidden mx-auto w-full max-w-7xl px-6" role="alert">
+        <p class="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
+            The backend is unavailable. Start Pennywise with <code class="font-semibold">npm start</code>, then refresh this page.
+        </p>
+    </div>
+
+    <main class="w-full max-w-7xl mx-auto px-6 py-8 sm:py-12 flex-1">
+        <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-7">
+            <div>
+                <p class="text-sm font-semibold text-blue-600">Your money, in one view</p>
+                <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight mt-1">Command Center</h1>
+                <p class="text-sm text-slate-500 mt-2">Track payments and upcoming commitments. Changes are saved by your local Pennywise backend.</p>
+            </div>
+            <div class="flex items-center gap-2">
+                <label class="sr-only" for="transaction-filter">Filter transactions</label>
+                <select id="transaction-filter" class="rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm">
+                    <option value="All">All payments</option>
+                    <option value="UPI">UPI</option>
+                    <option value="Card">Card</option>
+                    <option value="Auto-debit">Auto-debit</option>
+                    <option value="Bills & EMI">Bills & EMI</option>
+                </select>
+                <button id="add-expense" class="btn-primary rounded-xl px-4 py-2.5 text-sm">+ Add expense</button>
+            </div>
+        </div>
+
+        <section class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6" aria-label="Smart money insights">
+            <article class="soft-card insight-card p-5 bg-blue-50/70 border-blue-100">
+                <div class="flex items-center justify-between gap-3">
+                    <div>
+                        <p class="text-xs font-bold uppercase tracking-wide text-blue-700">Safe to spend today</p>
+                        <p class="text-xs text-slate-600 mt-1">After upcoming fixed payments</p>
+                    </div>
+                    <span aria-hidden="true" class="text-xl">✨</span>
+                </div>
+                <p id="safe-to-spend" class="insight-value font-extrabold text-[#34465A] mt-4">₹0</p>
+                <p id="safe-to-spend-note" class="text-xs text-slate-600 mt-1">Available per day for the rest of this month</p>
+                <form id="balance-form" class="flex items-end gap-2 mt-4">
+                    <label for="current-balance" class="flex-1 text-[11px] font-semibold text-slate-600">Current balance (₹)
+                        <input id="current-balance" name="balance" type="number" min="0" max="100000000" step="1" required class="mt-1 w-full rounded-lg border border-blue-200 bg-white px-3 py-2 text-sm" aria-label="Current available balance">
+                    </label>
+                    <button type="submit" class="btn-primary rounded-lg px-3 py-2 text-xs">Update</button>
+                </form>
+            </article>
+
+            <article class="soft-card insight-card p-5 bg-amber-50/70 border-amber-100" aria-live="polite">
+                <div class="flex items-center justify-between gap-3">
+                    <div>
+                        <p class="text-xs font-bold uppercase tracking-wide text-amber-800">Bounce Shield</p>
+                        <p class="text-xs text-slate-600 mt-1">Projected balance before due dates</p>
+                    </div>
+                    <span aria-hidden="true" class="text-xl">🛡️</span>
+                </div>
+                <div id="bounce-alert" class="mt-4 space-y-2"></div>
+            </article>
+
+            <article class="soft-card insight-card p-5 bg-violet-50/60 border-violet-100">
+                <div class="flex items-center justify-between gap-3">
+                    <div>
+                        <p class="text-xs font-bold uppercase tracking-wide text-violet-800">Free Trial Trap Detector</p>
+                        <p class="text-xs text-slate-600 mt-1">Trials nearing an automatic charge</p>
+                    </div>
+                    <span aria-hidden="true" class="text-xl">⏳</span>
+                </div>
+                <div id="trial-alert" class="mt-3 space-y-2"></div>
+                <button id="add-trial" type="button" class="mt-3 rounded-lg border border-violet-200 bg-white px-3 py-2 text-xs font-semibold text-violet-800 hover:bg-violet-50">+ Add free trial</button>
+            </article>
+        </section>
+
+        <section class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6" aria-label="Monthly summary">
+            <article class="soft-card p-5 bg-blue-50/60">
+                <p class="text-sm text-slate-600">Spent this month</p>
+                <p id="monthly-spend" class="text-2xl font-bold mt-1">₹0</p>
+            </article>
+            <article class="soft-card p-5">
+                <p class="text-sm text-slate-600">Tracked payments</p>
+                <p id="transaction-count" class="text-2xl font-bold mt-1">0</p>
+            </article>
+            <article class="soft-card p-5 bg-amber-50/60">
+                <p class="text-sm text-slate-600">Upcoming unpaid</p>
+                <p id="upcoming-total" class="text-2xl font-bold mt-1">₹0</p>
+            </article>
+        </section>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="lg:col-span-2 space-y-6">
+                <section class="soft-card p-5 sm:p-6">
+                    <h2 class="text-lg font-bold mb-4">Spending by category</h2>
+                    <div id="category-breakdown" class="space-y-4"></div>
+                </section>
+                <section class="soft-card p-5 sm:p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-lg font-bold">Recent payments</h2>
+                        <span class="text-xs text-slate-500">Newest first</span>
+                    </div>
+                    <div id="transaction-feed" class="space-y-3"></div>
+                </section>
+            </div>
+            <aside class="space-y-6">
+                <section class="soft-card p-5 sm:p-6">
+                    <div class="flex items-start justify-between gap-3">
+                        <div>
+                            <h2 class="text-lg font-bold">Upcoming bills & EMIs</h2>
+                            <p class="text-xs text-slate-500 mt-1 mb-4">Track rent, EMIs, and bills. Mark each paid when complete.</p>
+                        </div>
+                        <button id="add-commitment" type="button" class="shrink-0 rounded-lg border border-blue-200 bg-white px-3 py-2 text-xs font-semibold text-blue-700 hover:bg-blue-50">+ Add payment</button>
+                    </div>
+                    <div id="upcoming-bills" class="space-y-3"></div>
+                </section>
+                <section class="soft-card p-5 sm:p-6">
+                    <h2 class="text-lg font-bold mb-4">Subscription radar</h2>
+                    <div id="subscription-list" class="space-y-3"></div>
+                </section>
+            </aside>
+        </div>
+    </main>
+
+    <footer class="w-full max-w-7xl mx-auto px-6 py-6 border-t border-slate-200 text-xs text-slate-500 flex justify-between gap-4">
+        <span>© 2026 Pennywise</span>
+        <a href="contact.html" class="hover:text-blue-600">Contact & feedback</a>
+    </footer>
+
+    <dialog id="expense-dialog" class="w-[min(92vw,28rem)] rounded-2xl p-0 shadow-2xl backdrop:bg-slate-900/50">
+        <form id="expense-form" class="p-6 space-y-4">
+            <div class="flex items-start justify-between">
+                <div><h2 class="text-lg font-bold">Add an expense</h2><p class="text-xs text-slate-500 mt-1">Saved only in this browser.</p></div>
+                <button type="button" id="close-dialog" class="text-slate-500" aria-label="Close">✕</button>
+            </div>
+            <label class="block text-sm font-medium">Payment or merchant
+                <input name="merchant" required maxlength="60" class="mt-1 w-full rounded-lg border border-slate-200 p-2.5 text-sm" placeholder="e.g. Grocery shopping">
+            </label>
+            <div class="grid grid-cols-2 gap-3">
+                <label class="block text-sm font-medium">Amount (₹)
+                    <input name="amount" type="number" required min="1" max="10000000" step="0.01" class="mt-1 w-full rounded-lg border border-slate-200 p-2.5 text-sm" placeholder="500">
+                </label>
+                <label class="block text-sm font-medium">Category
+                    <select name="category" class="mt-1 w-full rounded-lg border border-slate-200 p-2.5 text-sm">
+                        <option>Food & Dining</option><option>Bills & EMI</option><option>Subscriptions</option>
+                        <option>Shopping</option><option>Transport</option><option>Other</option>
+                    </select>
+                </label>
+            </div>
+            <label class="block text-sm font-medium">Payment type
+                <select name="method" class="mt-1 w-full rounded-lg border border-slate-200 p-2.5 text-sm">
+                    <option>UPI</option><option>Card</option><option>Auto-debit</option><option>Bills & EMI</option>
+                </select>
+            </label>
+            <div class="flex justify-end gap-2 pt-2">
+                <button type="button" id="cancel-expense" class="rounded-lg border border-slate-200 px-4 py-2 text-sm">Cancel</button>
+                <button type="submit" class="btn-primary rounded-lg px-4 py-2 text-sm">Save expense</button>
+            </div>
+        </form>
+    </dialog>
+
+    <dialog id="trial-dialog" class="w-[min(92vw,28rem)] rounded-2xl p-0 shadow-2xl backdrop:bg-slate-900/50">
+        <form id="trial-form" class="p-6 space-y-4">
+            <div class="flex items-start justify-between">
+                <div><h2 class="text-lg font-bold">Track a free trial</h2><p class="text-xs text-slate-500 mt-1">We’ll flag it when its charge is within 2 days.</p></div>
+                <button type="button" id="close-trial-dialog" class="text-slate-500" aria-label="Close">✕</button>
+            </div>
+            <label class="block text-sm font-medium">Service name
+                <input name="name" required maxlength="60" class="mt-1 w-full rounded-lg border border-slate-200 p-2.5 text-sm" placeholder="e.g. Spotify">
+            </label>
+            <div class="grid grid-cols-2 gap-3">
+                <label class="block text-sm font-medium">Monthly charge (₹)
+                    <input name="amount" type="number" required min="1" max="1000000" step="1" class="mt-1 w-full rounded-lg border border-slate-200 p-2.5 text-sm" placeholder="119">
+                </label>
+                <label class="block text-sm font-medium">Trial ends
+                    <input name="expiresOn" type="date" required class="mt-1 w-full rounded-lg border border-slate-200 p-2.5 text-sm">
+                </label>
+            </div>
+            <p class="text-xs text-slate-500">This tracker cannot cancel the subscription or read your SMS automatically.</p>
+            <div class="flex justify-end gap-2 pt-2">
+                <button type="button" id="cancel-trial" class="rounded-lg border border-slate-200 px-4 py-2 text-sm">Cancel</button>
+                <button type="submit" class="btn-primary rounded-lg px-4 py-2 text-sm">Save trial</button>
+            </div>
+        </form>
+    </dialog>
+
+    <dialog id="commitment-dialog" class="w-[min(92vw,28rem)] rounded-2xl p-0 shadow-2xl backdrop:bg-slate-900/50">
+        <form id="commitment-form" class="p-6 space-y-4">
+            <div class="flex items-start justify-between">
+                <div><h2 class="text-lg font-bold">Add an upcoming payment</h2><p class="text-xs text-slate-500 mt-1">Include rent, an EMI, or a bill in your forecast.</p></div>
+                <button type="button" id="close-commitment-dialog" class="text-slate-500" aria-label="Close">✕</button>
+            </div>
+            <label class="block text-sm font-medium">Payment name
+                <input name="name" required maxlength="60" class="mt-1 w-full rounded-lg border border-slate-200 p-2.5 text-sm" placeholder="e.g. Monthly rent">
+            </label>
+            <div class="grid grid-cols-2 gap-3">
+                <label class="block text-sm font-medium">Amount (₹)
+                    <input name="amount" type="number" required min="1" max="10000000" step="1" class="mt-1 w-full rounded-lg border border-slate-200 p-2.5 text-sm" placeholder="8500">
+                </label>
+                <label class="block text-sm font-medium">Due date
+                    <input name="dueDate" type="date" required class="mt-1 w-full rounded-lg border border-slate-200 p-2.5 text-sm">
+                </label>
+            </div>
+            <div class="flex justify-end gap-2 pt-2">
+                <button type="button" id="cancel-commitment" class="rounded-lg border border-slate-200 px-4 py-2 text-sm">Cancel</button>
+                <button type="submit" class="btn-primary rounded-lg px-4 py-2 text-sm">Save payment</button>
+            </div>
+        </form>
+    </dialog>
+
+    <div id="toast" class="fixed bottom-5 right-5 z-50 rounded-xl bg-slate-800 px-4 py-3 text-sm text-white shadow-xl opacity-0 translate-y-16 transition-all" role="status" aria-live="polite"></div>
+
+    <script>
+        const today = new Date();
+        const localDateKey = (date) => `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+        let data = null;
+        let toastTimer;
+
+        function notify(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.remove('opacity-0', 'translate-y-16');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => toast.classList.add('opacity-0', 'translate-y-16'), 3500);
+        }
+
+        async function apiRequest(endpoint, options = {}) {
+            const headers = new Headers(options.headers || {});
+            if (options.body) headers.set('Content-Type', 'application/json');
+            let response;
+            try {
+                response = await fetch(`/api${endpoint}`, { ...options, headers });
+            } catch (error) {
+                throw new Error('Cannot connect to the backend. Run npm start and refresh the page.');
+            }
+            const result = await response.json().catch(() => ({}));
+            if (!response.ok) throw new Error(result.error || `Backend request failed (${response.status}).`);
+            return result;
+        }
+
+        async function refreshData() {
+            data = await apiRequest('/data');
+            document.getElementById('backend-error').classList.add('hidden');
+            render();
+        }
+
+        async function saveAndRefresh(endpoint, options) {
+            await apiRequest(endpoint, options);
+            await refreshData();
+        }
+
+        async function submitMutation(endpoint, method, payload, successMessage) {
+            try {
+                const options = { method };
+                if (payload !== null) options.body = JSON.stringify(payload);
+                await saveAndRefresh(endpoint, options);
+                notify(successMessage);
+                return true;
+            } catch (error) {
+                showBackendError(error);
+                return false;
+            }
+        }
+
+        function showBackendError(error) {
+            console.error('Pennywise backend request failed:', error);
+            document.getElementById('backend-error').classList.remove('hidden');
+            notify(error.message || 'The backend request failed.');
+        }
+
+        function escapeHtml(value) {
+            return String(value).replace(/[&<>"']/g, (character) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[character]);
+        }
+
+        function rupees(amount) {
+            return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(amount);
+        }
+
+        function daysUntil(dateKey) {
+            const [year, month, day] = dateKey.split('-').map(Number);
+            const target = Date.UTC(year, month - 1, day);
+            const current = Date.UTC(today.getFullYear(), today.getMonth(), today.getDate());
+            return Math.round((target - current) / 86400000);
+        }
+
+        function billDaysUntil(bill) {
+            return bill.dueDate ? daysUntil(bill.dueDate) : bill.dueIn;
+        }
+
+        function getUpcomingCommitments() {
+            const bills = data.bills
+                .filter((bill) => !bill.paid)
+                .map((bill) => ({ name: bill.name, amount: bill.amount, dueIn: billDaysUntil(bill) }))
+                .filter((bill) => bill.dueIn >= 0);
+            const trials = data.trials
+                .map((trial) => ({ ...trial, dueIn: daysUntil(trial.expiresOn) }))
+                .filter((trial) => trial.dueIn >= 0)
+                .map((trial) => ({ name: `${trial.name} trial converts`, amount: trial.amount, dueIn: trial.dueIn }));
+            return [...bills, ...trials].sort((a, b) => a.dueIn - b.dueIn);
+        }
+
+        function render() {
+            if (!data) return;
+            const month = localDateKey(today).slice(0, 7);
+            const monthTransactions = data.transactions.filter((item) => item.date.slice(0, 7) === month);
+            const unpaid = data.bills.filter((bill) => !bill.paid);
+            const commitments = getUpcomingCommitments();
+            const daysLeft = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate() - today.getDate() + 1;
+            const reserved = commitments
+                .filter((item) => item.dueIn < daysLeft)
+                .reduce((sum, item) => sum + item.amount, 0);
+            const availableAfterCommitments = Math.max(0, data.balance - reserved);
+            const dailySafeSpend = Math.floor(availableAfterCommitments / Math.max(1, daysLeft));
+            document.getElementById('current-balance').value = data.balance;
+            document.getElementById('safe-to-spend').textContent = rupees(dailySafeSpend);
+            document.getElementById('safe-to-spend-note').textContent = data.balance < reserved
+                ? `${rupees(reserved - data.balance)} short of upcoming fixed payments`
+                : `Per day for the ${daysLeft} remaining days this month`;
+
+            const projectedByCommitment = [];
+            let projectedBalance = data.balance;
+            commitments.forEach((item) => {
+                projectedBalance -= item.amount;
+                if (projectedBalance < 0 && projectedByCommitment.length === 0) {
+                    projectedByCommitment.push({ ...item, shortfall: Math.abs(projectedBalance), projectedBalance });
+                }
+            });
+            const bounceAlert = document.getElementById('bounce-alert');
+            if (projectedByCommitment.length) {
+                const risk = projectedByCommitment[0];
+                const dueText = risk.dueIn === 0 ? 'today' : `in ${risk.dueIn} days`;
+                bounceAlert.innerHTML = `<p class="text-sm font-bold text-amber-950">${escapeHtml(risk.name)} due ${dueText}</p>
+                    <p class="text-sm leading-relaxed text-amber-900">Projected balance: ${rupees(risk.projectedBalance)}. Add at least <strong>${rupees(risk.shortfall)}</strong> to avoid a shortfall.</p>`;
+            } else {
+                bounceAlert.innerHTML = '<p class="text-sm font-semibold text-emerald-800">You’re on track. No upcoming payment is projected to exceed your available balance.</p>';
+            }
+
+            const trialList = document.getElementById('trial-alert');
+            trialList.innerHTML = data.trials.length ? data.trials.map((trial) => {
+                const remaining = daysUntil(trial.expiresOn);
+                let message;
+                let warningStyle;
+                if (remaining < 0) {
+                    message = `Trial end date passed. Check whether ${escapeHtml(trial.name)} has started charging.`;
+                    warningStyle = 'bg-slate-100 text-slate-700';
+                } else if (remaining <= 2) {
+                    message = `${escapeHtml(trial.name)} trial ends ${remaining === 0 ? 'today' : `in ${remaining} day${remaining === 1 ? '' : 's'}`}; ${rupees(trial.amount)}/month may start after. Cancel with the provider if you don’t want it.`;
+                    warningStyle = 'bg-violet-100 text-violet-900';
+                } else {
+                    message = `${escapeHtml(trial.name)} trial ends in ${remaining} days; then ${rupees(trial.amount)}/month.`;
+                    warningStyle = 'bg-white text-slate-700';
+                }
+                return `<div class="rounded-lg ${warningStyle} p-3">
+                    <p class="text-xs leading-relaxed">${message}</p>
+                    <button type="button" data-remove-trial="${escapeHtml(trial.id)}" class="mt-2 text-[11px] font-semibold underline">Remove from tracker</button>
+                </div>`;
+            }).join('') : '<p class="text-xs text-slate-600">No free trials being tracked. Add one to get a reminder before its first charge.</p>';
+
+            document.getElementById('monthly-spend').textContent = rupees(monthTransactions.reduce((sum, item) => sum + item.amount, 0));
+            document.getElementById('transaction-count').textContent = monthTransactions.length;
+            document.getElementById('upcoming-total').textContent = rupees(unpaid.reduce((sum, bill) => sum + bill.amount, 0));
+
+            const categories = monthTransactions.reduce((totals, item) => {
+                totals[item.category] = (totals[item.category] || 0) + item.amount;
+                return totals;
+            }, {});
+            const categoryTotal = Object.values(categories).reduce((sum, amount) => sum + amount, 0);
+            const colors = ['bg-blue-500', 'bg-sky-400', 'bg-indigo-400', 'bg-cyan-500'];
+            const entries = Object.entries(categories).sort((a, b) => b[1] - a[1]);
+            document.getElementById('category-breakdown').innerHTML = entries.length ? entries.map(([name, amount], index) => {
+                const percent = categoryTotal ? Math.round(amount / categoryTotal * 100) : 0;
+                return `<div><div class="flex justify-between text-sm mb-1"><span>${escapeHtml(name)}</span><span class="font-semibold">${percent}% · ${rupees(amount)}</span></div><div class="h-2.5 rounded-full bg-slate-100 overflow-hidden"><div class="${colors[index % colors.length]} h-full rounded-full" style="width:${percent}%"></div></div></div>`;
+            }).join('') : '<p class="text-sm text-slate-500">Add an expense to see your breakdown.</p>';
+
+            const filter = document.getElementById('transaction-filter').value;
+            const transactions = [...data.transactions].filter((item) => filter === 'All' || item.method === filter).sort((a, b) => b.date.localeCompare(a.date));
+            document.getElementById('transaction-feed').innerHTML = transactions.length ? transactions.map((item) =>
+                `<article class="flex items-center justify-between gap-3 rounded-xl border border-slate-100 bg-slate-50 p-3">
+                    <div class="min-w-0"><p class="truncate text-sm font-semibold">${escapeHtml(item.merchant)}</p><p class="text-xs text-slate-500">${escapeHtml(item.method)} · ${escapeHtml(item.date)} · ${escapeHtml(item.category)}</p></div>
+                    <span class="whitespace-nowrap text-sm font-bold">-${rupees(item.amount)}</span>
+                </article>`
+            ).join('') : '<p class="text-sm text-slate-500">No payments match this filter.</p>';
+
+            document.getElementById('upcoming-bills').innerHTML = unpaid.length ? unpaid.sort((a, b) => billDaysUntil(a) - billDaysUntil(b)).map((bill) =>
+                `<div class="flex items-center justify-between gap-2 rounded-xl border border-amber-100 bg-amber-50/50 p-3">
+                    <div><p class="text-sm font-semibold">${escapeHtml(bill.name)}</p><p class="text-xs text-slate-500">${rupees(bill.amount)} · ${billDaysUntil(bill) === 0 ? 'due today' : `due in ${billDaysUntil(bill)} day${billDaysUntil(bill) === 1 ? '' : 's'}`}</p></div>
+                    <button type="button" data-paid="${escapeHtml(bill.id)}" class="shrink-0 rounded-lg bg-amber-600 px-2.5 py-2 text-xs font-semibold text-white">Mark paid</button>
+                </div>`
+            ).join('') : '<p class="text-sm text-emerald-700">You are all caught up.</p>';
+
+            const subscriptions = data.bills.filter((bill) => ['youtube', 'prime'].includes(bill.id) && !data.dismissedSubscriptions.includes(bill.id));
+            document.getElementById('subscription-list').innerHTML = subscriptions.length ? subscriptions.map((bill) =>
+                `<div class="flex items-center justify-between gap-2 rounded-xl border border-slate-100 p-3">
+                    <div><p class="text-sm font-semibold">${escapeHtml(bill.name)}</p><p class="text-xs text-slate-500">Renews in ${bill.dueIn} days · ${rupees(bill.amount)}</p></div>
+                    <button type="button" data-review="${escapeHtml(bill.id)}" class="text-xs font-semibold text-blue-700">Review</button>
+                </div>`
+            ).join('') : '<p class="text-sm text-slate-500">No subscriptions to review.</p>';
+        }
+
+        const dialog = document.getElementById('expense-dialog');
+        const trialDialog = document.getElementById('trial-dialog');
+        const commitmentDialog = document.getElementById('commitment-dialog');
+        document.getElementById('add-expense').addEventListener('click', () => dialog.showModal());
+        document.getElementById('close-dialog').addEventListener('click', () => dialog.close());
+        document.getElementById('cancel-expense').addEventListener('click', () => dialog.close());
+        document.getElementById('add-trial').addEventListener('click', () => {
+            document.querySelector('#trial-form [name="expiresOn"]').min = localDateKey(today);
+            trialDialog.showModal();
+        });
+        document.getElementById('close-trial-dialog').addEventListener('click', () => trialDialog.close());
+        document.getElementById('cancel-trial').addEventListener('click', () => trialDialog.close());
+        document.getElementById('add-commitment').addEventListener('click', () => {
+            document.querySelector('#commitment-form [name="dueDate"]').min = localDateKey(today);
+            commitmentDialog.showModal();
+        });
+        document.getElementById('close-commitment-dialog').addEventListener('click', () => commitmentDialog.close());
+        document.getElementById('cancel-commitment').addEventListener('click', () => commitmentDialog.close());
+        document.getElementById('transaction-filter').addEventListener('change', render);
+        document.getElementById('balance-form').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const balance = Number(new FormData(event.currentTarget).get('balance'));
+            if (!Number.isFinite(balance) || balance < 0) {
+                notify('Enter a valid non-negative balance.');
+                return;
+            }
+            await submitMutation('/balance', 'PUT', { balance }, 'Available balance updated.');
+        });
+        document.getElementById('expense-form').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const form = event.currentTarget;
+            const values = new FormData(form);
+            const saved = await submitMutation('/transactions', 'POST', {
+                merchant: String(values.get('merchant')).trim(),
+                amount: Number(values.get('amount')),
+                category: String(values.get('category')),
+                method: String(values.get('method')),
+                date: localDateKey(today)
+            }, 'Expense saved.');
+            if (!saved) return;
+            form.reset();
+            dialog.close();
+        });
+        document.getElementById('trial-form').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const form = event.currentTarget;
+            const values = new FormData(form);
+            const expiresOn = String(values.get('expiresOn'));
+            if (daysUntil(expiresOn) < 0) {
+                notify('Choose a trial end date today or later.');
+                return;
+            }
+            const saved = await submitMutation('/trials', 'POST', {
+                name: String(values.get('name')).trim(),
+                amount: Number(values.get('amount')),
+                expiresOn
+            }, 'Trial reminder saved.');
+            if (!saved) return;
+            form.reset();
+            trialDialog.close();
+        });
+        document.getElementById('commitment-form').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const form = event.currentTarget;
+            const values = new FormData(form);
+            const dueDate = String(values.get('dueDate'));
+            if (daysUntil(dueDate) < 0) {
+                notify('Choose a payment due date today or later.');
+                return;
+            }
+            const saved = await submitMutation('/bills', 'POST', {
+                name: String(values.get('name')).trim(),
+                amount: Number(values.get('amount')),
+                dueDate
+            }, 'Upcoming payment added to your forecast.');
+            if (!saved) return;
+            form.reset();
+            commitmentDialog.close();
+        });
+        document.getElementById('trial-alert').addEventListener('click', async (event) => {
+            const button = event.target.closest('[data-remove-trial]');
+            if (!button) return;
+            const trial = data.trials.find((item) => item.id === button.dataset.removeTrial);
+            if (!trial) return;
+            await submitMutation(`/trials/${encodeURIComponent(trial.id)}`, 'DELETE', null, `${trial.name} removed from the tracker. Cancel it with the provider separately.`);
+        });
+        document.getElementById('upcoming-bills').addEventListener('click', async (event) => {
+            const button = event.target.closest('[data-paid]');
+            if (!button) return;
+            const bill = data.bills.find((item) => item.id === button.dataset.paid);
+            if (!bill) return;
+            await submitMutation(`/bills/${encodeURIComponent(bill.id)}/paid`, 'PATCH', { paid: true }, `${bill.name} marked as paid.`);
+        });
+        document.getElementById('subscription-list').addEventListener('click', async (event) => {
+            const button = event.target.closest('[data-review]');
+            if (!button) return;
+            const bill = data.bills.find((item) => item.id === button.dataset.review);
+            if (!bill) return;
+            await submitMutation(`/subscriptions/${encodeURIComponent(bill.id)}`, 'DELETE', null, `${bill.name} removed from your radar. Cancel it with the provider separately.`);
+        });
+
+        refreshData().catch(showBackendError);
+    </script>
+</body>
+</html>
